@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>payment al offcial · Simple Payment</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 20% 30%, #1a1a2e, #0f0f1f);
+      color: #f0f0ff;
+      padding: 20px;
+      perspective: 1200px;
+      overflow-x: hidden;
+    }
+
+    /* latar belakang 3D berputar */
+    .bg-3d {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      background: radial-gradient(circle at 60% 40%, #2d1b4e, #0b0b1a);
+      transform: rotateX(2deg) rotateY(4deg);
+      animation: bgFloat 16s ease-in-out infinite alternate;
+    }
+
+    @keyframes bgFloat {
+      0% { transform: rotateX(2deg) rotateY(4deg) scale(1); }
+      100% { transform: rotateX(-3deg) rotateY(-6deg) scale(1.02); }
+    }
+
+    /* partikel bintang animasi */
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background-image: 
+        radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+        radial-gradient(3px 3px at 120px 40px, #f8d7ff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 90px 180px, #c2b0ff, rgba(0,0,0,0)),
+        radial-gradient(3px 3px at 240px 90px, #b8a5ff, rgba(0,0,0,0));
+      background-size: 300px 300px;
+      opacity: 0.7;
+      animation: twinkle 5s ease-in-out infinite alternate;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.4; transform: scale(1); }
+      100% { opacity: 0.9; transform: scale(1.1); }
+    }
+
+    .card-3d {
+      max-width: 680px;
+      width: 100%;
+      background: rgba(22, 18, 45, 0.55);
+      backdrop-filter: blur(14px) saturate(180%);
+      -webkit-backdrop-filter: blur(14px) saturate(180%);
+      border-radius: 48px 48px 40px 40px;
+      padding: 2.2rem 1.8rem 2.8rem;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 215, 255, 0.15);
+      transform: rotateY(3deg) rotateX(2deg) translateZ(20px);
+      transition: transform 0.3s ease, box-shadow 0.4s ease;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      animation: cardFloat 5s ease-in-out infinite alternate;
+    }
+
+    @keyframes cardFloat {
+      0% { transform: rotateY(2deg) rotateX(1deg) translateZ(10px); }
+      100% { transform: rotateY(-3deg) rotateX(3deg) translateZ(25px); }
+    }
+
+    .card-3d:hover {
+      transform: rotateY(0deg) rotateX(0deg) translateZ(30px) scale(1.01);
+      box-shadow: 0 40px 80px rgba(120, 80, 255, 0.4), 0 0 0 2px rgba(200, 180, 255, 0.3);
+    }
+
+    /* judul utama */
+    .judul-bahagia {
+      font-size: 3rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #ffe8b0, #fbc2eb, #a6c1ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(255, 180, 255, 0.3);
+      margin-bottom: 0.1rem;
+      transform: translateZ(40px);
+      animation: glowPulse 3s infinite alternate;
+    }
+
+    @keyframes glowPulse {
+      0% { filter: drop-shadow(0 0 6px #b78aff); }
+      100% { filter: drop-shadow(0 0 20px #ffb3f0); }
+    }
+
+    .subjudul {
+      font-weight: 300;
+      color: #c8c0f0;
+      letter-spacing: 2px;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+      padding-bottom: 0.8rem;
+    }
+
+    .qr-wrapper {
+      position: relative;
+      display: inline-block;
+      margin: 20px 0 18px;
+      transform: translateZ(30px);
+      transition: transform 0.3s ease;
+    }
+
+    .qr-wrapper:hover {
+      transform: translateZ(50px) scale(1.02);
+    }
+
+    .qr-wrapper img {
+      width: 210px;
+      height: auto;
+      border-radius: 24px;
+      background: white;
+      padding: 8px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      transition: 0.3s;
+    }
+
+    .qr-wrapper img:hover {
+      transform: scale(1.03);
+      box-shadow: 0 30px 60px rgba(80, 40, 200, 0.5);
+    }
+
+    .collapsible-container {
+      margin: 30px 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .collapsible {
+      background: rgba(45, 35, 80, 0.6);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 60px;
+      padding: 16px 24px;
+      font-weight: 600;
+      font-size: 1.15rem;
+      color: #f2eaff;
+      text-align: left;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.25s ease;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      transform: translateZ(10px);
+      letter-spacing: 1px;
+    }
+
+    .collapsible::after {
+      content: '▾';
+      position: absolute;
+      right: 24px;
+      font-size: 1.3rem;
+      transition: transform 0.35s ease;
+      color: #b8a5ff;
+    }
+
+    .collapsible.active::after {
+      transform: rotate(-180deg);
+    }
+
+    .collapsible:hover {
+      background: rgba(70, 50, 130, 0.7);
+      border-color: #b28aff;
+      box-shadow: 0 12px 28px rgba(100, 70, 255, 0.4);
+      transform: translateZ(20px) scale(1.01);
+    }
+
+    .content {
+      max-height: 0;
+      overflow: hidden;
+      background: rgba(10, 8, 25, 0.5);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-radius: 28px;
+      margin-top: 6px;
+      transition: max-height 0.5s cubic-bezier(0.23, 1, 0.32, 1), padding 0.3s ease, border 0.2s;
+      padding: 0 24px;
+      border: 1px solid transparent;
+      color: #dad6ff;
+      font-weight: 300;
+    }
+
+    .content.open {
+      max-height: 420px;
+      padding: 18px 24px 24px;
+      border-color: rgba(200, 170, 255, 0.25);
+    }
+
+    .content img {
+      width: 160px;
+      border-radius: 18px;
+      margin: 12px auto 12px;
+      display: block;
+      background: white;
+      padding: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .content img:hover {
+      transform: scale(1.05);
+      filter: brightness(1.05);
+    }
+
+    .content p {
+      margin: 10px 0 6px;
+      line-height: 1.6;
+    }
+
+    .btn-group-3d {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      margin: 36px 0 8px;
+      transform: translateZ(20px);
+    }
+
+    .btn-3d {
+      padding: 14px 28px;
+      background: linear-gradient(145deg, #3a2a6a, #1d1640);
+      border: 1px solid rgba(255, 215, 255, 0.2);
+      border-radius: 60px;
+      font-weight: 600;
+      color: #f0ecff;
+      text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      box-shadow: 0 12px 0 #0b0820, 0 12px 25px rgba(0, 0, 0, 0.5);
+      transform: translateY(0px) translateZ(10px);
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex: 0 1 auto;
+    }
+
+    .btn-3d:hover {
+      transform: translateY(-6px) translateZ(30px) scale(1.03);
+      box-shadow: 0 8px 0 #0b0820, 0 20px 40px rgba(90, 50, 200, 0.5);
+      background: linear-gradient(145deg, #4f3a8a, #2a1e55);
+      border-color: #c5adff;
+      color: white;
+    }
+
+    .btn-3d:active {
+      transform: translateY(4px) translateZ(5px);
+      box-shadow: 0 4px 0 #0b0820;
+    }
+
+    .btn-pay-3d {
+      background: linear-gradient(145deg, #7f5fcf, #4a2d8a);
+      box-shadow: 0 12px 0 #281d4a, 0 12px 30px rgba(130, 70, 255, 0.3);
+      border-color: #bc9eff;
+      padding: 16px 42px;
+      font-size: 1.2rem;
+    }
+
+    .btn-pay-3d:hover {
+      background: linear-gradient(145deg, #9873e8, #5f3ea0);
+      box-shadow: 0 8px 0 #281d4a, 0 25px 50px rgba(150, 80, 255, 0.5);
+    }
+
+    /* fullscreen qr overlay 3D */
+    .fullscreen-qr {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(8, 6, 22, 0.85);
+      backdrop-filter: blur(12px) saturate(180%);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+      perspective: 800px;
+    }
+
+    .fullscreen-qr:not(.hidden) {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .fullscreen-qr img {
+      max-width: 85%;
+      max-height: 85%;
+      border-radius: 36px;
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(255, 215, 255, 0.2);
+      transform: rotateY(4deg) rotateX(2deg) scale(0.95);
+      transition: transform 0.3s ease;
+      background: white;
+      padding: 12px;
+    }
+
+    .fullscreen-qr:not(.hidden) img {
+      transform: rotateY(0deg) rotateX(0deg) scale(1);
+    }
+
+    .fullscreen-qr.hidden {
+      display: none;
+    }
+
+    /* welcome overlay */
+    .welcome-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      padding: 2rem;
+      text-align: center;
+      animation: fadeOverlay 1s ease;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    @keyframes fadeOverlay {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    .welcome-overlay h1 {
+      font-size: 3.5rem;
+      background: linear-gradient(135deg, #ffd6b0, #f6b0f0, #b0caf5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 40px rgba(200, 150, 255, 0.3);
+      animation: floatText 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatText {
+      0% { transform: translateY(0px) translateZ(20px); }
+      100% { transform: translateY(-10px) translateZ(40px); }
+    }
+
+    .welcome-overlay p {
+      color: #cbc3f0;
+      font-size: 1.4rem;
+      letter-spacing: 2px;
+      margin-bottom: 2.5rem;
+    }
+
+    .welcome-overlay .btn-pay-3d {
+      font-size: 1.5rem;
+      padding: 18px 50px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* responsif */
+    @media (max-width: 500px) {
+      .card-3d { padding: 1.8rem 1rem; }
+      .judul-bahagia { font-size: 2.4rem; }
+      .btn-3d { padding: 12px 20px; font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-3d"></div>
+<div class="stars"></div>
+
+<!-- Welcome overlay -->
+<div id="welcomeOverlay" class="welcome-overlay">
+  <h1>✨ PAYMENT AL OFFCIAL ✨</h1>
+  <p>HAI MAS/MBAK · AL OFFCIAL</p>
+  <button id="goToPaymentBtn" class="btn-3d btn-pay-3d">☀️ Payment</button>
+</div>
+
+<!-- main card 3D -->
+<div id="mainCard" class="card-3d hidden">
+  <h1 class="judul-bahagia">payment zhidan</h1>
+  <div class="subjudul">✦ Payment List ✦</div>
+
+  <div class="qr-wrapper">
+    <img src="https://files.catbox.moe/1qjmtt.jpg" alt="QR utama" />
+  </div>
+  <p style="font-weight:300; margin-bottom:10px;">Scan QR atau pilih metode di bawah</p>
+
+  <div class="collapsible-container">
+    <button class="collapsible active" id="qrisBtn">💳 QRIS</button>
+    <div class="content open">
+      <img src="https://files.catbox.moe/afxlei.jpg" id="qrisImage" alt="QRIS" />
+      <p>Scan pakai DANA / Gopay / OVO</p>
+    </div>
+
+    <button class="collapsible">📱 DANA</button>
+    <div class="content">
+      <p><strong>083197746282</strong></p>
+      <p>a.n. Gada Nama</p>
+    </div>
+
+    <button class="collapsible">🟢 GOPAY</button>
+    <div class="content">
+      <p><strong>— 083197746282 —</strong></p>
+      <p style="opacity:0.6;">a.n Gada Nama</p>
+    </div>
+  </div>
+
+  <div class="btn-group-3d">
+    <a href="https://wa.me/6283197746282" class="btn-3d" target="_blank">💬 WhatsApp</a>
+    <a href="https://www.instagram.com/namaataulink_id_lu" class="btn-3d" target="_blank">📸 Instagram</a>
+    <a href="#" class="btn-3d" id="backBtn">↺ Kembali</a>
+  </div>
+  <div style="margin-top: 8px; font-size: 0.8rem; opacity:0.4;">Bahagia selalu ✦</div>
+</div>
+
+<!-- fullscreen QR overlay -->
+<div id="fullscreenQr" class="fullscreen-qr hidden">
+  <img src="https://files.catbox.moe/afxlei.jpg" alt="QRIS full" />
+</div>
+
+<script>
+  (function() {
+    const welcome = document.getElementById('welcomeOverlay');
+    const mainCard = document.getElementById('mainCard');
+    const goBtn = document.getElementById('goToPaymentBtn');
+    const backBtn = document.getElementById('backBtn');
+    const qrisImage = document.getElementById('qrisImage');
+    const fullQr = document.getElementById('fullscreenQr');
+    const qrisBtn = document.getElementById('qrisBtn');
+
+    // show payment
+    goBtn.addEventListener('click', function() {
+      welcome.classList.add('hidden');
+      mainCard.classList.remove('hidden');
+    });
+
+    // back (ke welcome)
+    backBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      mainCard.classList.add('hidden');
+      welcome.classList.remove('hidden');
+      // reset collapsible ? (opsional)
+    });
+
+    // collapsible toggles
+    const collapsibles = document.querySelectorAll('.collapsible');
+    collapsibles.forEach((btn) => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const content = this.nextElementSibling;
+        const isActive = this.classList.contains('active');
+        // close others (optional)
+        // tapi biar bebas, kita toggle aja
+        this.classList.toggle('active');
+        if (content) {
+          content.classList.toggle('open');
+        }
+      });
+    });
+
+    // qris image -> fullscreen
+    qrisImage.addEventListener('click', function(e) {
+      e.stopPropagation();
+      fullQr.classList.remove('hidden');
+    });
+
+    // fullscreen close
+    fullQr.addEventListener('click', function() {
+      fullQr.classList.add('hidden');
+    });
+
+    // agar qris button bisa toggle juga (sudah)
+    // jika qris button di klik, otomatis content terbuka
+
+    // default: qris aktif
+    const qrisContent = qrisBtn.nextElementSibling;
+    if (qrisBtn.classList.contains('active') && qrisContent) {
+      qrisContent.classList.add('open');
+    }
+
+    // efek 3D tambahan di card (optional)
+  })();
+</script>
+
+</body>
+</html>
